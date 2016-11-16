@@ -18,6 +18,14 @@ stdenv.mkDerivation rec {
     sha256 = "09cn3scwy98wqxkrjhnmxhpfnnynlbb41856yn5m3zwzqrxiyvak";
   };
 
+  patches = [
+    (fetchpatch {
+      url = "http://svnweb.mageia.org/packages/cauldron/shutter/current/SOURCES/CVE-2015-0854.patch?revision=880308&view=co;"
+      name = "CVE-2015-0854.patch"
+      sha256 = "09cn3scwy98wqxkrjhnmxhpfnnynlbb41856yn5m3zwzqr1iyvak";
+    })
+  ];
+
   buildInputs = [ perl makeWrapper gdk_pixbuf librsvg ] ++ perlModules;
 
   installPhase = ''
