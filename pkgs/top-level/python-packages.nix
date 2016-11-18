@@ -31256,4 +31256,8 @@ in {
       license = licenses.mit;
     };
   };
+
+  zeitgeist = if isPy3k then throw "zeitgeist not supported for interpreter ${python.executable}" else
+    (pkgs.zeitgeist.override{python2Packages=self;}).py;
+
 }
