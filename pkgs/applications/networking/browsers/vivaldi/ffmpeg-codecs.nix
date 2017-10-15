@@ -21,7 +21,7 @@ stdenv.mkDerivation rec {
   ];
 
   patches = [
-    ../chromium/patches/chromium-gn-bootstrap-r8.patch
+    ./chromium-gn-bootstrap-r8.patch
   ];
 
   configurePhase = ''
@@ -51,5 +51,6 @@ stdenv.mkDerivation rec {
     license     = licenses.lgpl21;
     maintainers = with maintainers; [ lluchs ];
     platforms   = [ "x86_64-linux" ];
+    broken = true;
   };
 }

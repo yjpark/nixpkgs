@@ -40,33 +40,38 @@ let
 
   pluggable = terraform:
     let
-      withPlugins = plugins: stdenv.mkDerivation {
-        name = "${terraform.name}-with-plugins";
-        buildInputs = [ makeWrapper ];
+      withPlugins = plugins:
+        let
+          actualPlugins = plugins terraform.plugins;
 
-        buildCommand = ''
-          mkdir -p $out/bin/
-          makeWrapper "${terraform.bin}/bin/terraform" "$out/bin/terraform" \
-            --set NIX_TERRAFORM_PLUGIN_DIR "${buildEnv { name = "tf-plugin-env"; paths = plugins terraform.plugins; }}/bin"
-        '';
+          passthru = {
+            withPlugins = newplugins: withPlugins (x: newplugins x ++ actualPlugins);
 
-        passthru = {
-          withPlugins = newplugins: withPlugins (x: newplugins x ++ plugins x);
+            # Ouch
+            overrideDerivation = f: (pluggable (terraform.overrideDerivation f)).withPlugins plugins;
+            overrideAttrs = f: (pluggable (terraform.overrideAttrs f)).withPlugins plugins;
+            override = x: (pluggable (terraform.override x)).withPlugins plugins;
+          };
+        in
+          # Don't bother wrapping unless we actually have plugins, since the wrapper will stop automatic downloading
+          # of plugins, which might be counterintuitive if someone just wants a vanilla Terraform.
+          if actualPlugins == []
+            then terraform.overrideAttrs (orig: { passthru = orig.passthru // passthru; })
+            else stdenv.mkDerivation {
+              name = "${terraform.name}-with-plugins";
+              buildInputs = [ makeWrapper ];
 
-          # Ouch
-          overrideDerivation = f: (pluggable (terraform.overrideDerivation f)).withPlugins plugins;
-          overrideAttrs = f: (pluggable (terraform.overrideAttrs f)).withPlugins plugins;
-          override = x: (pluggable (terraform.override x)).withPlugins plugins;
-        };
-      };
+              buildCommand = ''
+                mkdir -p $out/bin/
+                makeWrapper "${terraform.bin}/bin/terraform" "$out/bin/terraform" \
+                  --set NIX_TERRAFORM_PLUGIN_DIR "${buildEnv { name = "tf-plugin-env"; paths = actualPlugins; }}/bin"
+              '';
+
+              inherit passthru;
+            };
     in withPlugins (_: []);
 
-  plugins = {
-    aws = import providers/aws.nix { inherit stdenv lib buildGoPackage fetchFromGitHub; };
-    azurerm = import providers/azurerm.nix { inherit stdenv lib buildGoPackage fetchFromGitHub; };
-    google = import providers/google.nix { inherit stdenv lib buildGoPackage fetchFromGitHub; };
-    kubernetes = import providers/kubernetes.nix { inherit stdenv lib buildGoPackage fetchFromGitHub; };
-  };
+  plugins = import ./providers { inherit stdenv lib buildGoPackage fetchFromGitHub; };
 in {
   terraform_0_8_5 = generic {
     version = "0.8.5";
@@ -86,8 +91,8 @@ in {
   };
 
   terraform_0_10 = pluggable (generic {
-    version = "0.10.2";
-    sha256 = "1q7za7jcfqv914a3ynfl7hrqbgwcahgm418kivjrac6p1q26w502";
+    version = "0.10.7";
+    sha256 = "0gjvrra255m973nzi7rpqp5dn5npnd79cnv8vjcs7wmkdj1hli0l";
     patches = [ ./provider-path.patch ];
     passthru = { inherit plugins; };
   });
