@@ -16,8 +16,8 @@
 
 let
 
-  version = "2.5.5";
-  sha256 = "46a72367b7301145906185f1e4136e39d6792d27643826e409ab708351b6d0dd";
+  version = "3.1.0";
+  sha256 = "3b6493ebdcfff1eb31faf34d164d57049f7253ff5bffafa6ce2263c9ac123f31";
 
 in
 
