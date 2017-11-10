@@ -12,6 +12,7 @@
 , docbook_xsl
 , libxslt
 , pcre
+, c-ares
 }:
 
 let
@@ -26,18 +27,17 @@ with stdenv.lib;
 stdenv.mkDerivation rec {
   name = "shadowsocks-libev-${version}";
   src = fetchurl {
-    url = "https://github.com/shadowsocks/shadowsocks-libev/archive/v${version}.tar.gz";
+    url = "https://github.com/shadowsocks/shadowsocks-libev/releases/download/v${version}/shadowsocks-libev-${version}.tar.gz";
     inherit sha256;
   };
 
-  buildInputs = [ zlib asciidoc xmlto docbook_xml_dtd_45 docbook_xsl libxslt pcre ]
+  buildInputs = [ zlib asciidoc xmlto docbook_xml_dtd_45 docbook_xsl libxslt pcre c-ares ]
                 ++ optional (!withMbedTLS) openssl
                 ++ optional withMbedTLS mbedtls
                 ++ optionals enableSystemSharedLib [libev libsodium udns];
 
   configureFlags = optional withMbedTLS
-                     [ "--with-crypto-library=mbedtls"
-                       "--with-mbedtls=${mbedtls}"
+                     [ "--with-mbedtls=${mbedtls}"
                      ]
                    ++ optional enableSystemSharedLib "--enable-system-shared-lib";
 
