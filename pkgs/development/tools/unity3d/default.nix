@@ -25,16 +25,16 @@ let
     gnome-sharp gtk-sharp-2_0
   ];
 
-  ver = "5.6.1";
-  build = "f1";
+  ver = "2017.2.0";
+  build = "f3";
 
 in stdenv.mkDerivation rec {
   name = "unity-editor-${version}";
   version = "${ver}x${build}";
 
   src = fetchurl {
-    url = "http://beta.unity3d.com/download/6a86e542cf5c/unity-editor-installer-${version}Linux.sh";
-    sha256 = "10z4h94c9h967gx4b3gwb268zn7bnrb7ylnqnmnqhx6byac7cf4m";
+    url = "http://beta.unity3d.com/download/ee86734cf592/unity-editor-installer-${version}.sh";
+    sha256 = "07ym11pnwkwdrifdh1kh25snzm566v9vd6h5vps17rnsc0rdj9w8";
   };
 
   nosuidLib = ./unity-nosuid.c;
