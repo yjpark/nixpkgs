@@ -38,8 +38,8 @@ stdenv.mkDerivation rec {
 
   configureFlags = optional withMbedTLS
                      [ "--with-mbedtls=${mbedtls}"
-                     ]
-                   ++ optional enableSystemSharedLib "--enable-system-shared-lib";
+                     ];
+                     # ++ optional enableSystemSharedLib "--enable-system-shared-lib";
 
   meta = {
     description = "A lightweight secured SOCKS5 proxy";
