@@ -3701,7 +3701,6 @@ with pkgs;
   owncloud = owncloud70;
 
   inherit (callPackages ../servers/owncloud { })
-    owncloud705
     owncloud70
     owncloud80
     owncloud81
@@ -5232,6 +5231,8 @@ with pkgs;
 
   bash-completion = callPackage ../shells/bash-completion { };
 
+  nix-bash-completions = callPackage ../shells/nix-bash-completions { };
+
   dash = callPackage ../shells/dash { };
 
   es = callPackage ../shells/es { };
@@ -6548,6 +6549,7 @@ with pkgs;
 
   # Python interpreters. All standard library modules are included except for tkinter, which is
   # available as `pythonPackages.tkinter` and can be used as any other Python package.
+  # When switching these sets, please update docs at ../../doc/languages-frameworks/python.md
   python = python2;
   python2 = python27;
   python3 = python36;
@@ -15592,7 +15594,9 @@ with pkgs;
 
   scudcloud = callPackage ../applications/networking/instant-messengers/scudcloud { };
 
-  shotcut = libsForQt5.callPackage ../applications/video/shotcut { };
+  shotcut = libsForQt5.callPackage ../applications/video/shotcut {
+    libmlt = mlt;
+  };
 
   smplayer = libsForQt5.callPackage ../applications/video/smplayer { };
 
@@ -18886,6 +18890,10 @@ with pkgs;
   hplip = callPackage ../misc/drivers/hplip { };
 
   hplipWithPlugin = hplip.override { withPlugin = true; };
+
+  hplip_3_16_11 = callPackage ../misc/drivers/hplip/3.16.11.nix { };
+
+  hplipWithPlugin_3_16_11 = hplip.override { withPlugin = true; };
 
   epkowa = callPackage ../misc/drivers/epkowa { };
 
